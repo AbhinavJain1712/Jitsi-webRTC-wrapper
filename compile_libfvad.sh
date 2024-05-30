@@ -17,7 +17,7 @@ make
 make install
 
 cd ..
-cp "$TARGET/lib/libfvad.so.0.0.0" lib/native/linux-64
-mv lib/native/linux-64/libfvad.so.0.0.0 lib/native/linux-64/libfvad.so
+cp "$TARGET/lib/libfvad.0.dylib" lib/native/Darwin
+mv lib/native/Darwin/libfvad.0.dylib lib/native/Darwin/libfvad.dylib
 
 rm -r $TARGET
