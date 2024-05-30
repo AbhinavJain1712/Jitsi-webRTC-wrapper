@@ -1,0 +1,15 @@
+/classes
+*.swp
+dist
+*.class
+*.jar
+
+.idea/*
+*.iml
+
+target/*
+cmake-build/*
+cmake-build-debug/*
+
+libfvad/*
+.DS_Store
