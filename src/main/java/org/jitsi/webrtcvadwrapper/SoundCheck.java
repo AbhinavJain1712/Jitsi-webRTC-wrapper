@@ -14,12 +14,12 @@ public class SoundCheck {
         double averageDuration = 0.0;
         long ct = 0;
 
-// Warm-up period
+      // Warm-up period
         int warmUpFrames = 100;
         for (int i = 0; i < warmUpFrames; i++) {
             byte[] frame = new byte[frameSize];
             System.arraycopy(audioBytes, i * frameSize, frame, 0, frameSize);
-            isSpeechFunction.apply(frame);  // Just call the function without measuring time
+            isSpeechFunction.apply(frame);
         }
 
         for (int i = warmUpFrames * frameSize; i + frameSize <= audioBytes.length; i += frameSize) {
@@ -57,12 +57,12 @@ public class SoundCheck {
         double averageDuration = 0.0;
         long ct = 0;
 
-// Warm-up period
+     // Warm-up period
         int warmUpFrames = 100;
         for (int i = 0; i < warmUpFrames; i++) {
             int[] frame = new int[frameSize];
             System.arraycopy(audioSamples, i * frameSize, frame, 0, frameSize);
-            isSpeechFunction.apply(frame);  // Just call the function without measuring time
+            isSpeechFunction.apply(frame);
         }
 
         for (int i = warmUpFrames * frameSize; i + frameSize <= audioSamples.length; i += frameSize) {
