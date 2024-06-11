@@ -39,13 +39,13 @@ public class WebRTCVad
 //            String os = System.getProperty("os.name");
 //
 //            if (os.toLowerCase().contains("linux")) {
-              JNIUtils.loadLibrary("fvad", WebRTCVad.class);
-                JNIUtils.loadLibrary("webrtcvadwrapper", WebRTCVad.class);
+//              JNIUtils.loadLibrary("fvad", WebRTCVad.class);
+//                JNIUtils.loadLibrary("webrtcvadwrapper", WebRTCVad.class);
 //            } else {
 //                throw new Exception("Unsupported OS: " + os);
 //            }
-//            System.loadLibrary("fvad");
-//            System.loadLibrary("webrtcvadwrapper");
+            System.loadLibrary("fvad");
+            System.loadLibrary("webrtcvadwrapper");
 
         } catch (Exception e) {
             System.out.println("Error loading native library: " + e);
@@ -107,12 +107,16 @@ public class WebRTCVad
         }
 
         int ms10Length = sampleRate / 100;
-
-        return new int[] {
-            ms10Length,
-            ms10Length * 2,
-            ms10Length * 3
-        };
+        if (sampleRate == 8000) {
+            return new int[]{ms10Length, ms10Length * 2, ms10Length * 3, ms10Length * 4}; // 80, 160, 240, 320
+        }
+       else {
+            return new int[]{
+                    ms10Length,
+                    ms10Length * 2,
+                    ms10Length * 3
+            };
+        }
     }
 
     /**

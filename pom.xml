@@ -29,7 +29,17 @@
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
-
+        <!-- Add VAD4J dependency -->
+        <dependency>
+            <groupId>com.orctom</groupId>
+            <artifactId>vad4j</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.25</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -90,5 +100,12 @@
             </snapshots>
             <url>https://github.com/jitsi/jitsi-maven-repository/raw/master/snapshots/</url>
         </repository>
+        <!-- Add the repository for VAD4J if necessary -->
+        <repository>
+            <id>vad4j-repository</id>
+            <url>https://example.com/repo</url> <!-- Replace with the actual repository URL if needed -->
+        </repository>
     </repositories>
 </project>
+
+
