@@ -12,7 +12,7 @@ public class SoundCheck {
         SoundState soundState = new SoundState();
 
         double averageDuration = 0.0;
-        long ct = 0;
+        long frameCount = 0;
 
       // Warm-up period
         int warmUpFrames = 100;
@@ -29,7 +29,7 @@ public class SoundCheck {
             boolean isSpeechSegment = false;
 
             long frameDuration = 0;
-            if (ct < 1) {
+            if (frameCount<1) {
                 for (int j = 0; j < 10000; j++) {
                     long startTime = System.nanoTime();
                     isSpeechSegment = isSpeechFunction.apply(frame);
@@ -40,7 +40,7 @@ public class SoundCheck {
             }
 
             averageDuration += frameDuration;
-            ct++;
+            frameCount++;
 
             soundState.update(isSpeechSegment, start, end);
         }
@@ -55,7 +55,7 @@ public class SoundCheck {
         SoundState soundState = new SoundState();
 
         double averageDuration = 0.0;
-        long ct = 0;
+        long frameCount = 0;
 
      // Warm-up period
         int warmUpFrames = 100;
@@ -72,7 +72,7 @@ public class SoundCheck {
             boolean isSpeechSegment = false;
 
             long frameDuration = 0;
-            if (ct < 1) {
+            if (frameCount ==300) {
                 for (int j = 0; j < 10000; j++) {
                     long startTime = System.nanoTime();
                     isSpeechSegment = isSpeechFunction.apply(frame);
@@ -83,7 +83,7 @@ public class SoundCheck {
             }
 
             averageDuration += frameDuration;
-            ct++;
+            frameCount++;
 
             soundState.update(isSpeechSegment, start, end);
         }
@@ -92,3 +92,5 @@ public class SoundCheck {
         soundState.finalizeLastSegment(start, end);
     }
 }
+
+
