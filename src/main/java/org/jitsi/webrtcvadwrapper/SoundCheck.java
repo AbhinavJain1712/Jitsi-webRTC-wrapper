@@ -2,8 +2,6 @@ package org.jitsi.webrtcvadwrapper;
 
 import java.util.List;
 import java.util.function.Function;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class SoundCheck {
@@ -28,18 +26,12 @@ public class SoundCheck {
 
             boolean isSpeechSegment = false;
 
-            long frameDuration = 0;
-            if (frameCount<1) {
-                for (int j = 0; j < 10000; j++) {
-                    long startTime = System.nanoTime();
-                    isSpeechSegment = isSpeechFunction.apply(frame);
-                    long endTime = System.nanoTime();
-                    frameDuration += (endTime - startTime);
-                }
-                frameDuration /= 10000;
-            }
 
-            averageDuration += frameDuration;
+            if (frameCount<1) {
+               CalculateAverageTime averageTime = new CalculateAverageTime();
+                averageTime.Iterations(frame,isSpeechSegment,isSpeechFunction);
+                averageDuration += averageTime.frameDuration;
+            }
             frameCount++;
 
             soundState.update(isSpeechSegment, start, end);
@@ -71,18 +63,11 @@ public class SoundCheck {
 
             boolean isSpeechSegment = false;
 
-            long frameDuration = 0;
-            if (frameCount ==300) {
-                for (int j = 0; j < 10000; j++) {
-                    long startTime = System.nanoTime();
-                    isSpeechSegment = isSpeechFunction.apply(frame);
-                    long endTime = System.nanoTime();
-                    frameDuration += (endTime - startTime);
-                }
-                frameDuration /= 10000;
+            if (frameCount<1) {
+                CalculateAverageTime averageTime = new CalculateAverageTime();
+                averageTime.Iterations(frame,isSpeechSegment,isSpeechFunction);
+                averageDuration += averageTime.frameDuration;
             }
-
-            averageDuration += frameDuration;
             frameCount++;
 
             soundState.update(isSpeechSegment, start, end);
