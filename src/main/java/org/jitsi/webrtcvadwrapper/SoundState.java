@@ -17,6 +17,19 @@ public class SoundState {
         checkIsSound(isSpeechSegment);
         updateSpeechSegment(isSpeechSegment, start, end);
     }
+    private void checkIsSound(boolean isSpeechSegment) {
+        if (!isSound) {
+            if (isSpeechSegment) {
+                soundTime += 20;
+                if (soundTime == 200) {
+                    isSound = true;
+                    soundTime = 0;
+                }
+            } else {
+                soundTime = 0;
+            }
+        }
+    }
 
     private void updateSpeechSegment(boolean isSpeechSegment, List<Double> start, List<Double> end) {
         if (isSound) {
@@ -39,19 +52,7 @@ public class SoundState {
         }
     }
 
-    private void checkIsSound(boolean isSpeechSegment) {
-        if (!isSound) {
-            if (isSpeechSegment) {
-                soundTime += 20;
-                if (soundTime == 200) {
-                    isSound = true;
-                    soundTime = 0;
-                }
-            } else {
-                soundTime = 0;
-            }
-        }
-    }
+
 
     public void finalizeLastSegment(List<Double> start, List<Double> end) {
         if (soundStart > 0) {
