@@ -11,6 +11,8 @@ import com.orctom.vad4j.VadMode;
 import com.orctom.vad4j.VadWindowSize;
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
+import java.util.Map;
+
 import org.jitsi.webrtcvadwrapper.AudioSegmentation;
 
 public class AudioProcessor {
@@ -19,23 +21,25 @@ public class AudioProcessor {
     private static final int VAD4J_FRAME_SIZE = 320;
 
 
-    public static void processAudioFileWebRTC(File file) throws IOException, UnsupportedAudioFileException {
-        System.out.println("Using Jitsi-WebRTC Library:");
+    public static void processAudioFileWebRTC(File file, Map<String, Double> treeMap ) throws IOException, UnsupportedAudioFileException {
+       // System.out.println("Using Jitsi-WebRTC Library:");
 
         byte[] audioBytes = AudioUtils.convertAudioFileToByteArray(file);
         ByteSignedPcmAudioSegment audioSegment = new ByteSignedPcmAudioSegment(audioBytes);
         int[] linear16Audio = audioSegment.to16bitPCM();
 
-        WebRTCVad vad = new WebRTCVad(8000, 2);
+        WebRTCVad vad = new WebRTCVad(8000, 1);
         List<Double> start = new ArrayList<>();
         List<Double> end = new ArrayList<>();
 
-        SoundCheck.checkSoundSegments(linear16Audio, WEBRTC_FRAME_SIZE, start, end, vad::isSpeech);
+        double average = SoundCheck.checkSoundSegments(linear16Audio, WEBRTC_FRAME_SIZE, start, end, vad::isSpeech);
+        String key = file.getName();
+        treeMap.put(key, treeMap.getOrDefault(key, 0.0) + average);
 
     }
 
-    public static void processAudioFileVAD4j(File file) throws IOException, UnsupportedAudioFileException {
-        System.out.println("Using Vad4j Library:");
+    public static void processAudioFileVAD4j(File file,Map<String, Double> treeMap) throws IOException, UnsupportedAudioFileException {
+        //System.out.println("Using Vad4j Library:");
 
         byte[] audioBytes = AudioUtils.convertAudioFileToByteArray(file);
         VAD vad = new VAD(VadWindowSize._20ms, VadMode.quality);
@@ -43,7 +47,10 @@ public class AudioProcessor {
         List<Double> start = new ArrayList<>();
         List<Double> end = new ArrayList<>();
 
-        SoundCheck.checkSoundSegments(audioBytes, VAD4J_FRAME_SIZE, start, end, vad::isSpeech);
+
+        double average = SoundCheck.checkSoundSegments(audioBytes, VAD4J_FRAME_SIZE, start, end, vad::isSpeech);
+        String key = file.getName();
+        treeMap.put(key, treeMap.getOrDefault(key, 0.0) + average);
 
     }
 }
