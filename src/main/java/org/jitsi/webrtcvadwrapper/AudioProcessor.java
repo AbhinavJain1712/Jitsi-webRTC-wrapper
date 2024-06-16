@@ -9,11 +9,8 @@ import java.util.List;
 import com.orctom.vad4j.VAD;
 import com.orctom.vad4j.VadMode;
 import com.orctom.vad4j.VadWindowSize;
-import javax.sound.sampled.*;
-import java.io.ByteArrayInputStream;
-import java.util.Map;
 
-import org.jitsi.webrtcvadwrapper.AudioSegmentation;
+import java.util.Map;
 
 public class AudioProcessor {
 
