@@ -32,7 +32,7 @@ public class SoundCheck {
         }
 
         //   System.out.println("Average Duration: "+averageDuration +"ns");
-        //    soundState.finalizeLastSegment(start, end);
+           soundState.finalizeLastSegment(start, end);
         return averageDuration / frameCount;
     }
 

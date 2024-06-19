@@ -25,12 +25,17 @@
             <version>1.0-45-gc3afb76</version>
         </dependency>
         <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.11.0</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
         <!-- Add VAD4J dependency -->
-        <dependency>
+        <dependency>`
             <groupId>com.orctom</groupId>
             <artifactId>vad4j</artifactId>
             <version>1.0</version>
@@ -55,14 +60,21 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-ea</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>4.2.1</version>
                 <configuration>
                     <instructions>
                         <Bundle-NativeCode>
-                            Darwin/libfvad.dylib;
-                            Darwin/libwebrtcvadwrapper.dylib;osname=Mac;processor=x86-64,
+                            src/resources/native/darwin-x86-64/libfvad.dylib;
+                            src/resources/native/darwin-x86-64/libwebrtcvadwrapper.dylib;osname=Mac;processor=x86-64,
                         </Bundle-NativeCode>
                     </instructions>
                 </configuration>
@@ -70,7 +82,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>lib/native</directory>
+                <directory>src/main/java/org/jitsi/webrtcvadwrapper/resources/native/darwin-x86-64</directory>
             </resource>
         </resources>
     </build>

@@ -32,8 +32,8 @@ class main {
                 for (File file : audioFiles) {
                     if (file.isFile() && file.getName().endsWith(".wav") ) {
                         try {
-                           //AudioProcessor.processAudioFileWebRTC(file,treeMap);
-                            AudioProcessor.processAudioFileVAD4j(file,treeMap);
+                            AudioProcessor.processAudioFileWebRTC(file,treeMap);
+                            //AudioProcessor.processAudioFileVAD4j(file,treeMap);
                         } catch (IOException | UnsupportedAudioFileException e) {
                             e.printStackTrace();
                         }

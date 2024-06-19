@@ -16,10 +16,17 @@
 
 package org.jitsi.webrtcvadwrapper;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
+
 import org.jitsi.utils.*;
 import org.jitsi.webrtcvadwrapper.Exceptions.*;
 
+
 import java.util.*;
+
+import static com.sun.jna.Platform.*;
 
 /**
  * This class encapsulates the native WebRTCVad library, useful for doing
@@ -33,20 +40,51 @@ public class WebRTCVad
     /*
      * Load the native library.
      */
+    private static int getPlatformCode() {
+        if (Platform.isARM() && Platform.isMac()) {
+            return 1;
+        } else if (Platform.is64Bit() && Platform.isMac()) {
+            return 2;
+        } else if (Platform.isARM() && Platform.isLinux()) {
+            return 3;
+        } else if (Platform.is64Bit() && Platform.isLinux()) {
+            return 4;
+        } else {
+            throw new UnsupportedOperationException("Unsupported platform");
+        }
+    }
     static
     {
         try {
-//            String os = System.getProperty("os.name");
 //
-//            if (os.toLowerCase().contains("linux")) {
-//              JNIUtils.loadLibrary("fvad", WebRTCVad.class);
-//                JNIUtils.loadLibrary("webrtcvadwrapper", WebRTCVad.class);
-//            } else {
-//                throw new Exception("Unsupported OS: " + os);
-//            }
-            System.loadLibrary("fvad");
-            System.loadLibrary("webrtcvadwrapper");
 
+            String dir = System.getProperty("user.dir")+"/src/main/java/org/jitsi/webrtcvadwrapper/resources/native";
+
+            int platformCode = getPlatformCode();
+            switch(platformCode){
+
+                case 1 :
+                    System.load(dir + "/darwin-aarch64/libfvad.dylib");
+                    System.load(dir+"/darwin-aarch64/libwebrtcvadwrapper.dylib");
+                    break;
+
+                case 2:
+                    System.load(dir + "/darwin-x86-64/libfvad.dylib");
+                    System.load(dir+"/darwin-x86-64/libwebrtcvadwrapper.dylib");
+                    break;
+
+                case 3:
+                    System.load(dir + "/linux-aarch64/libfvad.so");
+                    System.load(dir+"/linux-aarch64/libwebrtcvadwrapper.so");
+                    break;
+
+                case 4:
+                    System.load(dir + "/linux-x86-64/libfvad.so");
+                    System.load(dir+"/linux-x86-64/libwebrtcvadwrapper.so");
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unsupported platform");
+            }
         } catch (Exception e) {
             System.out.println("Error loading native library: " + e);
         }
