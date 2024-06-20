@@ -24,6 +24,9 @@ import org.jitsi.utils.*;
 import org.jitsi.webrtcvadwrapper.Exceptions.*;
 
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 import static com.sun.jna.Platform.*;
@@ -40,51 +43,38 @@ public class WebRTCVad
     /*
      * Load the native library.
      */
-    private static int getPlatformCode() {
-        if (Platform.isARM() && Platform.isMac()) {
-            return 1;
-        } else if (Platform.is64Bit() && Platform.isMac()) {
-            return 2;
-        } else if (Platform.isARM() && Platform.isLinux()) {
-            return 3;
-        } else if (Platform.is64Bit() && Platform.isLinux()) {
-            return 4;
-        } else {
-            throw new UnsupportedOperationException("Unsupported platform");
+    public static void loadNativeLibrary(String libraryName) {
+        // Get the class loader
+        ClassLoader classLoader = WebRTCVad.class.getClassLoader();
+
+        // Find the resource
+        URL resourceUrl = classLoader.getResource(libraryName);
+        System.out.println(resourceUrl);
+        if (resourceUrl == null) {
+            throw new RuntimeException("Native library not found: " + libraryName);
         }
+
+        // Get the resource path
+        String resourcePath = resourceUrl.getPath();
+
+        // Handle spaces in the path (URL encoding)
+        File resourceFile;
+        try {
+            resourceFile = new File(resourceUrl.toURI());
+        } catch (Exception e) {
+            // Fallback in case of URISyntaxException
+            resourceFile = new File(resourceUrl.getPath().replaceAll("%20", " "));
+        }
+
+        // Load the library
+        System.load(resourceFile.getAbsolutePath());
     }
-    static
+
+   static
     {
         try {
-//
-
-            String dir = System.getProperty("user.dir")+"/src/main/java/org/jitsi/webrtcvadwrapper/resources/native";
-
-            int platformCode = getPlatformCode();
-            switch(platformCode){
-
-                case 1 :
-                    System.load(dir + "/darwin-aarch64/libfvad.dylib");
-                    System.load(dir+"/darwin-aarch64/libwebrtcvadwrapper.dylib");
-                    break;
-
-                case 2:
-                    System.load(dir + "/darwin-x86-64/libfvad.dylib");
-                    System.load(dir+"/darwin-x86-64/libwebrtcvadwrapper.dylib");
-                    break;
-
-                case 3:
-                    System.load(dir + "/linux-aarch64/libfvad.so");
-                    System.load(dir+"/linux-aarch64/libwebrtcvadwrapper.so");
-                    break;
-
-                case 4:
-                    System.load(dir + "/linux-x86-64/libfvad.so");
-                    System.load(dir+"/linux-x86-64/libwebrtcvadwrapper.so");
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported platform");
-            }
+            loadNativeLibrary("darwin-x86-64/libfvad.dylib");
+            loadNativeLibrary("darwin-x86-64/libwebrtcvadwrapper.dylib");
         } catch (Exception e) {
             System.out.println("Error loading native library: " + e);
         }

@@ -73,8 +73,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-NativeCode>
-                            src/resources/native/darwin-x86-64/libfvad.dylib;
-                            src/resources/native/darwin-x86-64/libwebrtcvadwrapper.dylib;osname=Mac;processor=x86-64,
+                            lib/native/darwin-x86-64/libfvad.dylib;
+                            lib/native/darwin-x86-64/libwebrtcvadwrapper.dylib;osname=Mac;processor=x86-64,
                         </Bundle-NativeCode>
                     </instructions>
                 </configuration>
@@ -82,7 +82,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/java/org/jitsi/webrtcvadwrapper/resources/native/darwin-x86-64</directory>
+                <directory>lib/native</directory>
             </resource>
         </resources>
     </build>
