@@ -21,17 +21,25 @@ cd libfvad
 # Run autoreconf to generate the configure script
 autoreconf -i
 
-# Configure and build libfvad
 ./configure --prefix="$TARGET" --host=arm-apple-darwin
 make CC="$CC" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
 make install
 
 # Move the generated dynamic library to the desired location
-mkdir -p lib/native/Darwin-arm64
-cp "$TARGET/lib/libfvad.0.dylib" lib/native/Darwin-arm64/
-mv lib/native/Darwin-arm64/libfvad.0.dylib lib/native/Darwin-arm64/libfvad.dylib
+mkdir -p lib/native/darwin-arm64
+cp "$TARGET/lib/libfvad.0.dylib" lib/native/darwin-arm64/
+mv lib/native/darwin-arm64/libfvad.0.dylib lib/native/darwin-arm64/libfvad.dylib
 
 # Clean up the temporary build directory
 rm -r "$TARGET"
 
 echo "libfvad.dylib has been successfully built and installed."
+
+
+
+
+
+
+
+
+

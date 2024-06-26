@@ -52,8 +52,6 @@ public class SoundState {
         }
     }
 
-
-
     public void finalizeLastSegment(List<Double> start, List<Double> end) {
         if (soundStart > 0) {
             soundEnd = time;

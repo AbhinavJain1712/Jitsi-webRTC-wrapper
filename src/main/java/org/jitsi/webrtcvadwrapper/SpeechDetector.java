@@ -122,7 +122,7 @@ public class SpeechDetector<T extends AudioSegment>
         if(!this.vad.isValidLength(segmentSize))
         {
             throw new UnsupportedSegmentLengthException(segmentSize,
-                        WebRTCVad.getValidAudioSegmentLengths(sampleRate));
+                    WebRTCVad.getValidAudioSegmentLengths(sampleRate));
         }
 
         // window size needs to be a multiple of a segment so we can fit
@@ -158,7 +158,7 @@ public class SpeechDetector<T extends AudioSegment>
         if(segment.length != this.segmentSize)
         {
             throw new UnsupportedSegmentLengthException(segment.length,
-                        WebRTCVad.getValidAudioSegmentLengths(this.sampleRate));
+                    WebRTCVad.getValidAudioSegmentLengths(this.sampleRate));
         }
 
         if(vad.isSpeech(segment))

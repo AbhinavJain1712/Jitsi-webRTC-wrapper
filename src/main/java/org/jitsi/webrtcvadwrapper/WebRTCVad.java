@@ -1,95 +1,70 @@
-/*
- * Copyright @ 2019-Present 8x8, Inc
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.jitsi.webrtcvadwrapper;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
 import com.sun.jna.Platform;
-
-import org.jitsi.utils.*;
 import org.jitsi.webrtcvadwrapper.Exceptions.*;
-
-
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static com.sun.jna.Platform.*;
 
-/**
- * This class encapsulates the native WebRTCVad library, useful for doing
- * voice activity detection on mono, signed 16bit PCM audio files. Supported
- * frequencies are 8000, 16000, 32000 and 48000 Hz.
- *
- * @author Nik Vaessen
- */
-public class WebRTCVad
-{
-    /*
-     * Load the native library.
-     */
-    public static void loadNativeLibrary(String libraryName) {
-        // Get the class loader
-        ClassLoader classLoader = WebRTCVad.class.getClassLoader();
+public class WebRTCVad {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebRTCVad.class);
 
-        // Find the resource
-        URL resourceUrl = classLoader.getResource(libraryName);
-        System.out.println(resourceUrl);
-        if (resourceUrl == null) {
-            throw new RuntimeException("Native library not found: " + libraryName);
+    private static String getPlatformPath() {
+        if (Platform.isMac()) {
+            return Platform.isARM() ? "darwin-aarch64/" : "darwin-x86-64/";
+        } else if (Platform.isLinux()) {
+            return Platform.isARM() ? "linux-aarch64/" : "linux-x86-64/";
         }
-
-        // Get the resource path
-        String resourcePath = resourceUrl.getPath();
-
-        // Handle spaces in the path (URL encoding)
-        File resourceFile;
-        try {
-            resourceFile = new File(resourceUrl.toURI());
-        } catch (Exception e) {
-            // Fallback in case of URISyntaxException
-            resourceFile = new File(resourceUrl.getPath().replaceAll("%20", " "));
-        }
-
-        // Load the library
-        System.load(resourceFile.getAbsolutePath());
+        return null;
     }
 
-   static
-    {
+    private static String getLibExtension() {
+        return Platform.isMac() ? "dylib" : "so";
+    }
+    static {
         try {
-            loadNativeLibrary("darwin-x86-64/libfvad.dylib");
-            loadNativeLibrary("darwin-x86-64/libwebrtcvadwrapper.dylib");
+            String platformPath = getPlatformPath();
+
+            if (platformPath != null) {
+                loadLibrary("native/" + platformPath + "libfvad." + getLibExtension());
+                loadLibrary("native/" + platformPath + "libwebrtcvadwrapper." + getLibExtension());
+            } else {
+                throw new UnsupportedOperationException("Unsupported Platform");
+            }
         } catch (Exception e) {
-            System.out.println("Error loading native library: " + e);
+            LOGGER.error("Failed to load fvad and webrtcvadwrapper library", e);
         }
     }
 
-    /**
-     * The integer values representing valid modes for the VAD detector
-     */
+    private static void loadLibrary(String libName) throws IOException {
+        File tempFile = File.createTempFile(libName, "");
+
+        try (InputStream in = ClassLoaderUtil.getResourceAsStream(libName)) {
+            try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            System.load(tempFile.getAbsolutePath());
+        } finally {
+            tempFile.delete();
+        }
+    }
+
     public final static int[] VALID_VAD_MODES = new int[] {0, 1, 2, 3};
 
     /**
      * The integer values representing valid sample rates (in Hz) of the audio
      */
     public final static int[] VALID_SAMPLE_RATES
-        = new int[] {8000, 16000, 32000, 48000};
+            = new int[] {8000, 16000, 32000, 48000};
 
     /**
      * Check whether a given integer value is a valid mode accepted by the VAD
@@ -100,8 +75,8 @@ public class WebRTCVad
     public static boolean isValidVadMode(int mode)
     {
         return Arrays
-            .stream(VALID_VAD_MODES)
-            .anyMatch(validMode -> validMode == mode);
+                .stream(VALID_VAD_MODES)
+                .anyMatch(validMode -> validMode == mode);
     }
 
     /**
@@ -113,8 +88,8 @@ public class WebRTCVad
     public static boolean isValidSampleRate(int sampleRate)
     {
         return Arrays
-            .stream(VALID_SAMPLE_RATES)
-            .anyMatch(rate -> rate == sampleRate);
+                .stream(VALID_SAMPLE_RATES)
+                .anyMatch(rate -> rate == sampleRate);
     }
 
     /**
@@ -126,19 +101,19 @@ public class WebRTCVad
      * invalid.
      */
     public static int[] getValidAudioSegmentLengths(int sampleRate)
-        throws UnsupportedSampleRateException
+            throws UnsupportedSampleRateException
     {
         if(!isValidSampleRate(sampleRate))
         {
             throw new UnsupportedSampleRateException(sampleRate,
-                                             WebRTCVad.VALID_SAMPLE_RATES);
+                    WebRTCVad.VALID_SAMPLE_RATES);
         }
 
         int ms10Length = sampleRate / 100;
         if (sampleRate == 8000) {
             return new int[]{ms10Length, ms10Length * 2, ms10Length * 3, ms10Length * 4}; // 80, 160, 240, 320
         }
-       else {
+        else {
             return new int[]{
                     ms10Length,
                     ms10Length * 2,
@@ -196,6 +171,7 @@ public class WebRTCVad
     @SuppressWarnings("unused")
     private long nativeVadPointer;
 
+
     /**
      * The valid sample rates of the audio which will be given. This is stored
      * so that we can check if a given audio segment has the correct length
@@ -224,22 +200,22 @@ public class WebRTCVad
      * @throws UnsupportedVadModeException when the given mode is invalid
      */
     public WebRTCVad(int sampleRate, int mode)
-        throws UnsupportedSampleRateException, UnsupportedVadModeException
+            throws UnsupportedSampleRateException, UnsupportedVadModeException
     {
         if(!isValidSampleRate(sampleRate))
         {
             throw new UnsupportedSampleRateException(sampleRate,
-                                             WebRTCVad.VALID_SAMPLE_RATES);
+                    WebRTCVad.VALID_SAMPLE_RATES);
         }
         if(!isValidVadMode(mode))
         {
             throw new UnsupportedVadModeException(mode,
-                                              WebRTCVad.VALID_VAD_MODES);
+                    WebRTCVad.VALID_VAD_MODES);
         }
 
         validAudioSampleLengths
-            = getValidAudioSegmentLengths(sampleRate);
-
+                = getValidAudioSegmentLengths(sampleRate);
+      
         nativeOpen(sampleRate, mode);
     }
 
@@ -298,9 +274,9 @@ public class WebRTCVad
      * @throws VadClosedException when the native object was already closed.
      */
     public boolean isSpeech(int[] audioSample)
-        throws UnsupportedSegmentLengthException,
-               NativeLibraryException,
-               VadClosedException
+            throws UnsupportedSegmentLengthException,
+            NativeLibraryException,
+            VadClosedException
     {
         if(!nativeIsOpen())
         {
@@ -311,7 +287,7 @@ public class WebRTCVad
         if(!isValidLength(audioSample))
         {
             throw new UnsupportedSegmentLengthException(audioSample.length,
-                                                validAudioSampleLengths);
+                    validAudioSampleLengths);
         }
 
         int result =  nativeIsSpeech(audioSample);
@@ -328,9 +304,9 @@ public class WebRTCVad
      * @see WebRTCVad#isSpeech(int[])
      */
     public boolean isSpeech(double[] audioSample)
-        throws UnsupportedSegmentLengthException,
-               NativeLibraryException,
-               VadClosedException
+            throws UnsupportedSegmentLengthException,
+            NativeLibraryException,
+            VadClosedException
     {
         return isSpeech(convertPCMAudioTo16bitInt(audioSample));
     }
@@ -357,7 +333,8 @@ public class WebRTCVad
     protected boolean isValidLength(int length)
     {
         return Arrays.stream(validAudioSampleLengths).
-            anyMatch(validLength -> validLength == length);
+                anyMatch(validLength -> validLength == length);
     }
 
-}
+};
+

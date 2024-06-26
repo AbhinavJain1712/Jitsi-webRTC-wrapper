@@ -6,7 +6,12 @@ import java.lang.reflect.Array;
 
 public class SoundCheck {
 
-    public static <T> double checkSoundSegments(T audioSamples, int frameSize, List<Double> start, List<Double> end, Function<T, Boolean> isSpeechFunction, Class<?> componentType) {
+    private SoundCheck() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> double checkSoundSegments(T audioSamples, int frameSize, List<Double> start, List<Double> end, Function<T, Boolean> isSpeechFunction, Class<T> componentType) {
         SoundState soundState = new SoundState();
 
         double averageDuration = 0.0;
@@ -15,7 +20,7 @@ public class SoundCheck {
         int length = Array.getLength(audioSamples);
 
         for (int i = 0; i + frameSize <= length; i += frameSize) {
-            T frame = (T)Array.newInstance(componentType, frameSize);
+            T frame = (T)Array.newInstance(componentType.getComponentType(), frameSize);
 
             System.arraycopy(audioSamples, i, frame, 0, frameSize);
 
@@ -31,17 +36,17 @@ public class SoundCheck {
             soundState.update(isSpeechSegment, start, end);
         }
 
-        //   System.out.println("Average Duration: "+averageDuration +"ns");
-           soundState.finalizeLastSegment(start, end);
-        return averageDuration / frameCount;
+        System.out.println("Average Duration: " + averageDuration + "ns");
+        soundState.finalizeLastSegment(start, end);
+        return frameCount!=0?averageDuration / frameCount:0;
     }
 
     // Wrapper methods to call the generic method with specific types
     public static double checkSoundSegments(byte[] audioBytes, int frameSize, List<Double> start, List<Double> end, Function<byte[], Boolean> isSpeechFunction) {
-        return checkSoundSegments(audioBytes, frameSize, start, end, isSpeechFunction, byte.class);
+        return checkSoundSegments(audioBytes, frameSize, start, end, isSpeechFunction, byte[].class);
     }
 
     public static double checkSoundSegments(int[] audioSamples, int frameSize, List<Double> start, List<Double> end, Function<int[], Boolean> isSpeechFunction) {
-        return checkSoundSegments(audioSamples, frameSize, start, end, isSpeechFunction, int.class);
+        return checkSoundSegments(audioSamples, frameSize, start, end, isSpeechFunction, int[].class);
     }
 }

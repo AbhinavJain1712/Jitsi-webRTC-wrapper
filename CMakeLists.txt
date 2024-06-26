@@ -17,6 +17,6 @@ set(SOURCE_FILES
 
 add_library(webrtcvadwrapper SHARED ${SOURCE_FILES})
 
-find_library(FVAD_LIB fvad PATHS ${CMAKE_SOURCE_DIR}/lib/native/Darwin-arm64)
+find_library(FVAD_LIB fvad PATHS ${CMAKE_SOURCE_DIR}/lib/native/darwin-arm64)
 target_link_libraries(webrtcvadwrapper ${FVAD_LIB})
 

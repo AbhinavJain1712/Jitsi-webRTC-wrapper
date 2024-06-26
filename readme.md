@@ -40,17 +40,15 @@ The example below shows the creation of a `WebRTCVad` object which accepts
 16 Khz audio and is running in mode 1.
 
 ```java
-import org.jitsi.webrtcvadwrapper.WebRTCVad;
 
-class Example
-{
-    public static void main(String[] args)
-    {
-        int[] linear16Audio = new int[] { /* 160, 320 or 480 integer values */ };
-        
+
+class Example {
+    public static void main(String[] args) {
+        int[] linear16Audio = new int[]{ /* 160, 320 or 480 integer values */};
+
         WebRTCVad vad = new WebRTCVad(16000, 1);
         boolean isSpeechSegment = vad.isSpeech(linear16Audio);
-    }    
+    }
 }
 ```
 
