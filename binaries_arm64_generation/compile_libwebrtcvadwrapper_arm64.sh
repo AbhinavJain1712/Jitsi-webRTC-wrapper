@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -e
+
+mkdir -p cmake-build
+cd cmake-build
+cmake -DCMAKE_OSX_ARCHITECTURES=arm64 ..
+make
+cp libwebrtcvadwrapper.dylib ../lib/native/darwin-arm64/.
+cd ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
