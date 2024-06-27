@@ -18,7 +18,7 @@ package org.jitsi.webrtcvadwrapper;
 
 import org.apache.commons.collections4.queue.*;
 import org.jitsi.webrtcvadwrapper.Exceptions.*;
-import org.jitsi.webrtcvadwrapper.audio.*;
+import org.jitsi.webrtcvadwrapper.audio.AudioSegment;
 
 import java.util.*;
 

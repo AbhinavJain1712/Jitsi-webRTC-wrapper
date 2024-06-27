@@ -4,10 +4,10 @@ set -e
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 TARGET="$SCRIPTPATH/target_libfvad/"
 
-# Cross-compiler setup for ARM64 on macOS
+# Cross-compiler setup for x86_64 on macOS
 export CC="xcrun --sdk macosx clang"
-export CFLAGS="-arch arm64 -target arm64-apple-macos11 -std=c11"
-export LDFLAGS="-arch arm64 -target arm64-apple-macos11"
+export CFLAGS="-arch x86_64 -target x86_64-apple-macos10.12 -std=c11"
+export LDFLAGS="-arch x86_64 -target x86_64-apple-macos10.12"
 
 cd "$SCRIPTPATH"
 
@@ -21,25 +21,16 @@ cd libfvad
 # Run autoreconf to generate the configure script
 autoreconf -i
 
-./configure --prefix="$TARGET" --host=arm-apple-darwin
+./configure --prefix="$TARGET" --host=x86_64-apple-darwin
 make CC="$CC" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
 make install
 
 # Move the generated dynamic library to the desired location
-mkdir -p lib/native/darwin-arm64
-cp "$TARGET/lib/libfvad.0.dylib" lib/native/darwin-arm64/
-mv lib/native/darwin-arm64/libfvad.0.dylib lib/native/darwin-arm64/libfvad.dylib
+mkdir -p lib/native/darwin-x86-64
+cp "$TARGET/lib/libfvad.0.dylib" lib/native/darwin-x86-64/
+mv lib/native/darwin-x86-64/libfvad.0.dylib lib/native/darwin-x86-64/libfvad.dylib
 
 # Clean up the temporary build directory
 rm -r "$TARGET"
 
 echo "libfvad.dylib has been successfully built and installed."
-
-
-
-
-
-
-
-
-

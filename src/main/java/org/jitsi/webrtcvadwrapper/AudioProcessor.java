@@ -26,7 +26,7 @@ public class AudioProcessor {
 
 
     public static void processAudioFileWebRTC(File file,Map<String, Double> treeMap) throws IOException, UnsupportedAudioFileException {
-        logger.info("Using Jitsi-WebRTC Library:");
+        //logger.info("Using Jitsi-WebRTC Library:");
 
         byte[] audioBytes = AudioUtils.convertAudioFileToByteArray(file);
         ByteSignedPcmAudioSegment audioSegment = new ByteSignedPcmAudioSegment(audioBytes);
@@ -38,33 +38,33 @@ public class AudioProcessor {
 
         double average = SoundCheck.checkSoundSegments(linear16Audio, WEBRTC_FRAME_SIZE, start, end, vad::isSpeech);
 
-        for(int i=0;i<start.size();i++)
-        {
-            System.out.println(start.get(i) + "-" + end.get(i));
-        }
+//        for(int i=0;i<start.size();i++)
+//        {
+//            System.out.println(start.get(i) + "-" + end.get(i));
+//        }
         String key = file.getName();
         treeMap.put(key, treeMap.getOrDefault(key, 0.0) + average);
 
     }
 
     public static void processAudioFileVAD4j(File file,Map<String, Double> treeMap) throws IOException, UnsupportedAudioFileException {
-        logger.info("Using Vad4j Library:");
+        //logger.info("Using Vad4j Library:");
 
         byte[] audioBytes = AudioUtils.convertAudioFileToByteArray(file);
         List<Double> start;
         List<Double> end;
         double average;
-        try (VAD vad = new VAD(VadWindowSize._20ms, VadMode.quality)) {
+        VAD vad = new VAD(VadWindowSize._20ms, VadMode.quality);
 
             start = new ArrayList<>();
             end = new ArrayList<>();
 
             average = SoundCheck.checkSoundSegments(audioBytes, VAD4J_FRAME_SIZE, start, end, vad::isSpeech);
-        }
-        for(int i=0;i< start.size();i++)
-        {
-            System.out.println(start.get(i)+ "-" + end.get(i));
-        }
+
+//        for(int i=0;i< start.size();i++)
+//        {
+//            System.out.println(start.get(i)+ "-" + end.get(i));
+//        }
         String key = file.getName();
         treeMap.put(key, treeMap.getOrDefault(key, 0.0) + average);
     }

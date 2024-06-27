@@ -25,7 +25,7 @@ import java.util.*;
  * @author Nik Vaessen
  */
 public class ByteSignedPcmAudioSegment
-    implements AudioSegment
+        implements AudioSegment
 {
     /**
      * Convert an array of bytes into an array of 16-bit integers.
@@ -86,7 +86,7 @@ public class ByteSignedPcmAudioSegment
      * @return every segment of the list merged into a single segment
      */
     public static ByteSignedPcmAudioSegment merge(
-        List<ByteSignedPcmAudioSegment> segments)
+            List<ByteSignedPcmAudioSegment> segments)
     {
         int totalLength = 0;
         for(int i = 0; i < segments.size(); i++)

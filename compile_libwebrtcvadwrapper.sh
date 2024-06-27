@@ -3,31 +3,7 @@ set -e
 
 mkdir -p cmake-build
 cd cmake-build
-cmake -DCMAKE_OSX_ARCHITECTURES=arm64 ..
+cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 ..
 make
-cp libwebrtcvadwrapper.dylib ../lib/native/darwin-arm64/.
+cp libwebrtcvadwrapper.dylib ../lib/native/darwin-x86-64/.
 cd ..
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

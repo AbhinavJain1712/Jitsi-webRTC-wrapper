@@ -4,7 +4,7 @@ project(webrtcvadwrapper)
 set(CMAKE_CXX_STANDARD 14)
 
 # Ensure CMake knows the target architecture
-set(CMAKE_OSX_ARCHITECTURES arm64)
+set(CMAKE_OSX_ARCHITECTURES x86_64)
 
 find_package(JNI REQUIRED)
 
@@ -17,6 +17,5 @@ set(SOURCE_FILES
 
 add_library(webrtcvadwrapper SHARED ${SOURCE_FILES})
 
-find_library(FVAD_LIB fvad PATHS ${CMAKE_SOURCE_DIR}/lib/native/darwin-arm64)
+find_library(FVAD_LIB fvad PATHS ${CMAKE_SOURCE_DIR}/lib/native/darwin-x86-64)
 target_link_libraries(webrtcvadwrapper ${FVAD_LIB})
-

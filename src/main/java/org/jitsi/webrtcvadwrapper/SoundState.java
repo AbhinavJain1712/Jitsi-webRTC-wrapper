@@ -14,10 +14,10 @@ public class SoundState {
     public void update(boolean isSpeechSegment, List<Double> start, List<Double> end) {
 
         time += 20;
-        checkIsSound(isSpeechSegment);
+        checkSound(isSpeechSegment);
         updateSpeechSegment(isSpeechSegment, start, end);
     }
-    private void checkIsSound(boolean isSpeechSegment) {
+    private void checkSound(boolean isSpeechSegment) {
         if (!isSound) {
             if (isSpeechSegment) {
                 soundTime += 20;

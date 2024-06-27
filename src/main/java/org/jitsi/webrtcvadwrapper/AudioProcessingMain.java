@@ -11,25 +11,26 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class AudioProcessingMain {
-
     private static final Logger logger = LoggerFactory.getLogger(AudioProcessingMain.class);
-
     public static void main(String[] args) {
         Comparator<String> comparator = createComparator();
 
-        String audioDirectoryPath = "/Users/abhinav.jain/Downloads/jitsi-webrtc-vad-wrapper/src/main/java/org/jitsi/webrtcvadwrapper/5-hours-output";
+        String audioDirectoryPath = "/Users/abhinav.jain/Downloads/jitsi-webrtc-vad-wrapper/src/main/java/org/jitsi/webrtcvadwrapper/audio_new";
         File audioDirectory = new File(audioDirectoryPath);
         File[] audioFiles = audioDirectory.listFiles();
-
-        int iterations = 1;
-        Map<String, Double> treeMap = new TreeMap<>(comparator);
+        int iterations = 500;
+        Map<String, Double> treeMapJitsi = new TreeMap<>(comparator);
+        Map<String, Double> treeMapVad = new TreeMap<>(comparator);
 
         if (audioFiles != null) {
-            processAudioFiles(audioFiles, iterations, treeMap);
-            printResults(treeMap, iterations);
+            processAudioFiles(audioFiles, iterations, treeMapJitsi, treeMapVad);
+            System.out.println("Using Jitsi:");
+            printResults(treeMapJitsi, iterations);
+            System.out.println("Using Vad4j:");
+            printResults(treeMapVad, iterations);
+
         }
     }
-
     private static Comparator<String> createComparator() {
         return (o1, o2) -> {
             int num1 = Integer.parseInt(o1.substring(o1.indexOf('-') + 1, o1.indexOf('.')));
@@ -37,29 +38,26 @@ public class AudioProcessingMain {
             return Integer.compare(num1, num2);
         };
     }
-
-    private static void processAudioFiles(File[] audioFiles, int iterations, Map<String, Double> treeMap) {
+    private static void processAudioFiles(File[] audioFiles, int iterations, Map<String, Double> treeMapJitsi, Map<String, Double> treeMapVad) {
         for (int i = 0; i < iterations; i++) {
             for (File file : audioFiles) {
                 if (file.isFile() && file.getName().endsWith(".wav")) {
-                    processSingleFile(file, treeMap);
+                    processSingleFile(file, treeMapJitsi,treeMapVad);
                 }
             }
         }
     }
-
-    private static void processSingleFile(File file, Map<String, Double> treeMap) {
+    private static void processSingleFile(File file, Map<String, Double> treeMapJitsi, Map<String, Double> treeMapVad) {
         try {
-            AudioProcessor.processAudioFileWebRTC(file, treeMap);
-            AudioProcessor.processAudioFileVAD4j(file, treeMap);
+            AudioProcessor.processAudioFileWebRTC(file, treeMapJitsi);
+            AudioProcessor.processAudioFileVAD4j(file, treeMapVad);
         } catch (IOException | UnsupportedAudioFileException e) {
             logger.error("Error processing file {}: {}", file.getName(), e.getMessage());
         }
     }
-
     private static void printResults(Map<String, Double> treeMap, int iterations) {
         for (Map.Entry<String, Double> entry : treeMap.entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue() / iterations + "ns");
+            System.out.println(entry.getKey() + " = " + entry.getValue() / iterations + "µs");
         }
     }
 }

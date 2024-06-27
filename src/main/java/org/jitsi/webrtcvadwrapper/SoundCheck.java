@@ -30,15 +30,15 @@ public class SoundCheck {
             isSpeechSegment = isSpeechFunction.apply(frame);
             long endTime = System.nanoTime();
 
-            averageDuration += (endTime - startTime);
+            averageDuration += (endTime - startTime)/1000;
             frameCount++;
 
             soundState.update(isSpeechSegment, start, end);
         }
 
-        System.out.println("Average Duration: " + averageDuration + "ns");
+//        System.out.println("Average Duration: " + averageDuration + "ns");
         soundState.finalizeLastSegment(start, end);
-        return frameCount!=0?averageDuration / frameCount:0;
+        return averageDuration ;
     }
 
     // Wrapper methods to call the generic method with specific types
